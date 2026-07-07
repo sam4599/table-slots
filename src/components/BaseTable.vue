@@ -107,15 +107,20 @@ function highlight(text, key) {
 
 <template>
 
-  <SortTable @sort="handleSort" />
+  <div class="table-toolbar">
+    <InputSelect
+        :headers="headers"
+        @send-header="getSelectHeader"
+        @search="setSearch"
+    />
 
-  <InputSelect
-      :headers="headers"
-      @send-header="getSelectHeader"
-      @search="setSearch"
-  />
+    <div class="toolbar-divider" aria-hidden="true" />
+
+    <SortTable @sort="handleSort" />
+  </div>
 
   <div v-if="loading" class="loading">
+    <span class="loading-spinner" />
     Загрузка...
   </div>
 
@@ -166,37 +171,114 @@ function highlight(text, key) {
 </template>
 
 <style scoped>
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.toolbar-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--color-border-light);
+  flex-shrink: 0;
+}
+
 .table-wrapper {
-  margin-top: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .table {
   border-collapse: collapse;
   width: 100%;
+  min-width: 480px;
 }
 
 .table th,
 .table td {
-  border: 1px solid #000;
-  padding: 8px;
+  border-bottom: 1px solid var(--color-border-light);
+  padding: 12px 16px;
   text-align: left;
+  font-size: 14px;
 }
 
 .table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+  background: var(--color-bg-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 20px;
-  font-size: 18px;
-  font-weight: bold;
+  padding: 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-lg);
 }
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .table tbody tr:hover {
-  background: #f5f5f5;
+  background: var(--color-bg-hover);
   cursor: pointer;
 }
+
 :deep(mark) {
-  background: yellow;
+  background: #fef08a;
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+@media (max-width: 768px) {
+  .table-toolbar {
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .toolbar-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
 }
 </style>

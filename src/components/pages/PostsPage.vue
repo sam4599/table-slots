@@ -25,8 +25,8 @@ onMounted(loadPosts)
 </script>
 
 <template>
-  <div>
-    <h1>Таблица постов</h1>
+  <div class="page">
+    <h1 class="page-title">Таблица постов</h1>
 
     <BaseTable
         :items="posts"
@@ -34,3 +34,18 @@ onMounted(loadPosts)
     />
   </div>
 </template>
+
+<style scoped>
+.page-title {
+  margin: 0 0 20px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 20px;
+  }
+}
+</style>
