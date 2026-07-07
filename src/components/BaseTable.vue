@@ -103,6 +103,12 @@ function highlight(text, key) {
   )
 }
 
+const COMPACT_FIELDS = new Set(['id', 'userId'])
+
+function isCompactField(key) {
+  return COMPACT_FIELDS.has(key)
+}
+
 </script>
 
 <template>
@@ -133,6 +139,7 @@ function highlight(text, key) {
         <th
             v-for="header in headers"
             :key="header"
+            :class="{ 'cell-compact': isCompactField(header) }"
         >
           {{ header }}
         </th>
@@ -150,6 +157,7 @@ function highlight(text, key) {
             v-for="key in headers"
             :key="key"
             :data-label="key"
+            :class="{ 'cell-compact': isCompactField(key) }"
             v-html="highlight(row[key], key)"
         ></td>
       </TableRow>
@@ -219,6 +227,17 @@ function highlight(text, key) {
   font-weight: 600;
   color: var(--color-text-secondary);
   white-space: nowrap;
+}
+
+.table th.cell-compact,
+.table td.cell-compact {
+  width: 72px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.table th.cell-compact {
+  font-size: 13px;
 }
 
 .table tbody tr:last-child td {
@@ -298,7 +317,8 @@ function highlight(text, key) {
   }
 
   .table tbody :deep(tr) {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
     background: var(--color-surface);
     border: 1px solid var(--color-border-light);
     border-radius: var(--radius-lg);
@@ -314,6 +334,7 @@ function highlight(text, key) {
     display: grid;
     grid-template-columns: 1fr;
     gap: 4px;
+    flex: 1 1 100%;
     padding: 10px 14px;
     font-size: 13px;
     border-bottom: 1px solid var(--color-border-light);
@@ -326,6 +347,33 @@ function highlight(text, key) {
     color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.04em;
+  }
+
+  .table td.cell-compact {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    padding: 8px 14px;
+    border-bottom: none;
+    border-right: 1px solid var(--color-border-light);
+    background: var(--color-bg-muted);
+  }
+
+  .table td.cell-compact::before {
+    margin: 0;
+    font-size: 10px;
+  }
+
+  .table td.cell-compact:last-child,
+  .table td.cell-compact:has(+ td:not(.cell-compact)) {
+    border-right: none;
+  }
+
+  .table td:not(.cell-compact) {
+    border-top: 1px solid var(--color-border-light);
   }
 
   .table td:last-child {
