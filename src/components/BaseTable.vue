@@ -149,6 +149,7 @@ function highlight(text, key) {
         <td
             v-for="key in headers"
             :key="key"
+            :data-label="key"
             v-html="highlight(row[key], key)"
         ></td>
       </TableRow>
@@ -192,8 +193,6 @@ function highlight(text, key) {
 }
 
 .table-wrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -202,7 +201,7 @@ function highlight(text, key) {
 .table {
   border-collapse: collapse;
   width: 100%;
-  min-width: 480px;
+  table-layout: fixed;
 }
 
 .table th,
@@ -211,6 +210,8 @@ function highlight(text, key) {
   padding: 12px 16px;
   text-align: left;
   font-size: 14px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .table th {
@@ -275,10 +276,60 @@ function highlight(text, key) {
     height: 1px;
   }
 
-  .table th,
+  .table-wrapper {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .table {
+    display: block;
+    table-layout: auto;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .table tbody :deep(tr) {
+    display: block;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .table tbody :deep(tr:hover) {
+    background: var(--color-bg-hover);
+  }
+
   .table td {
-    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 10px 14px;
     font-size: 13px;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .table td:last-child {
+    border-bottom: none;
   }
 }
 </style>
