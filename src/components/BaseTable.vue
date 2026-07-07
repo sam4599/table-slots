@@ -188,7 +188,6 @@ function isCompactField(key) {
 
 .table-main {
   flex: 1 1 auto;
-  height: 520px;
 }
 
 .table-toolbar {
