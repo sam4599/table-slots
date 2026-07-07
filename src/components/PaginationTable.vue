@@ -100,33 +100,40 @@ watch(() => props.localPosts.length, () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4px;
-  margin-top: auto;
-  padding: 16px 0 20px;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .pagination-button {
   min-width: 36px;
   padding: 8px 12px;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--color-text);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background: #f0f0f0;
+  background: var(--color-bg-hover);
 }
 
 .pagination-button.active {
-  background: #007bff;
-  color: white;
-  border-color: #007bff;
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
 }
 
 .pagination-button.active:hover {
-  background: #3395ff;
-  border-color: #3395ff;
+  background: #2563eb;
+  border-color: #2563eb;
 }
 
 .pagination-button:disabled {

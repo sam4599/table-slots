@@ -112,74 +112,85 @@ function isCompactField(key) {
 </script>
 
 <template>
+  <div class="base-table">
 
-  <div class="table-toolbar">
-    <InputSelect
-        :headers="headers"
-        @send-header="getSelectHeader"
-        @search="setSearch"
+    <div class="table-toolbar">
+      <InputSelect
+          :headers="headers"
+          @send-header="getSelectHeader"
+          @search="setSearch"
+      />
+
+      <div class="toolbar-divider" aria-hidden="true" />
+
+      <SortTable @sort="handleSort" />
+    </div>
+
+    <div class="table-main">
+      <div v-if="loading" class="loading">
+        <span class="loading-spinner" />
+        Загрузка...
+      </div>
+
+      <div v-else class="table-wrapper">
+        <table class="table">
+          <thead>
+          <tr>
+            <th
+                v-for="header in headers"
+                :key="header"
+                :class="{ 'cell-compact': isCompactField(header) }"
+            >
+              {{ header }}
+            </th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <TableRow
+              v-for="row in filteredPosts"
+              :key="row.id"
+              @click="openModal(row)"
+          >
+            <td
+                v-for="key in headers"
+                :key="key"
+                :data-label="key"
+                :class="{ 'cell-compact': isCompactField(key) }"
+                v-html="highlight(row[key], key)"
+            ></td>
+          </TableRow>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination-footer">
+      <PaginationTable
+          :local-posts="sortedPosts"
+          @send-posts="getPaginatedPosts"
+      />
+    </div>
+
+    <ModalWindow
+        v-if="modalOpen"
+        :item="selectedItem"
+        @close="closeModal"
     />
-
-    <div class="toolbar-divider" aria-hidden="true" />
-
-    <SortTable @sort="handleSort" />
   </div>
-
-  <div v-if="loading" class="loading">
-    <span class="loading-spinner" />
-    Загрузка...
-  </div>
-
-  <div v-else class="table-wrapper">
-
-    <table class="table">
-
-      <thead>
-      <tr>
-        <th
-            v-for="header in headers"
-            :key="header"
-            :class="{ 'cell-compact': isCompactField(header) }"
-        >
-          {{ header }}
-        </th>
-      </tr>
-      </thead>
-
-      <tbody>
-
-      <TableRow
-          v-for="row in filteredPosts"
-          :key="row.id"
-          @click="openModal(row)"
-      >
-        <td
-            v-for="key in headers"
-            :key="key"
-            :data-label="key"
-            :class="{ 'cell-compact': isCompactField(key) }"
-            v-html="highlight(row[key], key)"
-        ></td>
-      </TableRow>
-
-      </tbody>
-
-    </table>
-
-  </div>
-  <ModalWindow
-      v-if="modalOpen"
-      :item="selectedItem"
-      @close="closeModal"
-  />
-  <PaginationTable
-      :local-posts="sortedPosts"
-      @send-posts="getPaginatedPosts"
-  />
-
 </template>
 
 <style scoped>
+.base-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-main {
+  flex: 1 1 auto;
+  height: 520px;
+}
+
 .table-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -201,9 +212,17 @@ function isCompactField(key) {
 }
 
 .table-wrapper {
+  height: 100%;
+  overflow-y: auto;
   border: 1px solid var(--color-border-light);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+}
+
+.pagination-footer {
+  flex-shrink: 0;
+  margin-top: 24px;
+  padding-bottom: 16px;
 }
 
 .table {
@@ -248,13 +267,14 @@ function isCompactField(key) {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 20px;
+  height: 100%;
   padding: 24px;
   font-size: 15px;
   font-weight: 500;
   color: var(--color-text-secondary);
   background: var(--color-bg-muted);
   border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
 }
 
 .loading-spinner {
@@ -284,6 +304,11 @@ function isCompactField(key) {
 }
 
 @media (max-width: 768px) {
+  .table-main {
+    height: 60vh;
+    min-height: 360px;
+  }
+
   .table-toolbar {
     flex-direction: column;
     padding: 16px;
@@ -299,6 +324,7 @@ function isCompactField(key) {
     border: none;
     box-shadow: none;
     background: transparent;
+    -webkit-overflow-scrolling: touch;
   }
 
   .table {
